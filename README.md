@@ -1,4 +1,1 @@
-# Knights Travels
-The Odin Project
-
-Graph Implementation
+# Knights Travails
