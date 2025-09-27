@@ -9,52 +9,64 @@ const moves = [
   [-1, 2],
 ];
 
-const buildGraph = (start, end) => {
-  const graph = {};
-  const [rowStart] = start;
-  const [rowEnd] = end;
-
-  const min = Math.min(rowStart, rowEnd);
-  const max = Math.max(rowStart, rowEnd);
-
-  for (let i = min; i <= max; i++) {
-    if (!(i in graph)) graph[i] = [];
-    for (let j = 0; j < 8; j++) {
-      graph[i].push(j);
-    }
-  }
-
-  return graph;
-};
-
 const knightMoves = (start, end) => {
   // generate edge list
 
-  const visited = new Set(JSON.stringify(start));
+  const graph = {};
+  const visited = new Set();
+  const queue = [[start, 0]];
+
+  const initialKey = JSON.stringify(start);
+  visited.add(initialKey);
+  graph[initialKey] = [];
+
+  const [a, b] = start;
+
+  for (const [x, y] of moves) {
+    const newMove = [x + a, y + b];
+
+    if (newMove.every(digit => digit >= 0 && digit < 8)) {
+      const key = JSON.stringify(newMove);
+
+      if (!(key in graph)) {
+        graph[key] = [];
+        visited.add(JSON.stringify(key));
+      }
+    }
+  }
+
+  console.log(graph);
+
+  const result = [];
 
   // "[0,0]"
 
-  const graph = buildGraph(start, end);
-
-  const queue = [[start, 0]];
-
   while (queue.length > 0) {
     const current = queue.shift();
-    const [node, distance] = current;
-    if (foundNode(node, end)) return distance;
+
+    let [node, distance] = current;
+
+    if (JSON.stringify(node) === JSON.stringify(end))
+      console.log('Found Node!');
+
+    const [a, b] = node;
+
+    for (const [x, y] of moves) {
+      const newMove = [x + a, y + b];
+
+      if (newMove.every(digit => digit >= 0 && digit < 8)) {
+        graph[JSON.stringify(newMove)] = [];
+        graph[JSON.stringify(node)].push([newMove]);
+
+        if (!visited.has(JSON.stringify(newMove))) {
+          queue.push([newMove, distance++]);
+          visited.add(JSON.stringify(newMove));
+        }
+      }
+    }
   }
 
-  // traverse graph (bfs)
-};
-
-const foundNode = (a, b) => {
-  if (a.length !== b.length) return false;
-
-  for (let i = 0; i < b.length; i++) {
-    if (a[i] !== b[i]) return false;
-  }
-
-  return true;
+  console.log(graph);
 };
 
 knightMoves([0, 0], [3, 3]);
