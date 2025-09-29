@@ -16,6 +16,14 @@ const knightMoves = (start, end) => {
   const visited = new Set();
   const queue = [[start, 0]];
 
+  const result = [];
+
+  const positions = new Array(8).fill(null);
+
+  for (let j = 0; j < 8; j++) {
+    result.push(positions);
+  }
+
   const initialKey = JSON.stringify(start);
   visited.add(initialKey);
   graph[initialKey] = [];
@@ -35,10 +43,6 @@ const knightMoves = (start, end) => {
     }
   }
 
-  console.log(graph);
-
-  const result = [];
-
   // "[0,0]"
 
   while (queue.length > 0) {
@@ -46,8 +50,26 @@ const knightMoves = (start, end) => {
 
     let [node, distance] = current;
 
-    if (JSON.stringify(node) === JSON.stringify(end))
-      console.log('Found Node!');
+    for (let i = 0; i < result.length; i++) {
+      if (distance === 0) {
+        result[i][distance] = node;
+      } else {
+        const currentNode = JSON.stringify(node);
+        if (JSON.stringify(result[i][distance]) === currentNode) break;
+
+        result[i][distance] = node;
+      }
+    }
+
+    // if (!visited.has(JSON.stringify(node))) {
+    // }
+
+    visited.add(JSON.stringify(node));
+
+    if (JSON.stringify(node) === JSON.stringify(end)) {
+      console.log(distance, result);
+      return;
+    }
 
     const [a, b] = node;
 
@@ -55,18 +77,21 @@ const knightMoves = (start, end) => {
       const newMove = [x + a, y + b];
 
       if (newMove.every(digit => digit >= 0 && digit < 8)) {
-        graph[JSON.stringify(newMove)] = [];
+        const newKey = JSON.stringify(newMove);
+
+        if (!(newKey in graph)) {
+          graph[newKey] = [];
+        }
         graph[JSON.stringify(node)].push([newMove]);
 
-        if (!visited.has(JSON.stringify(newMove))) {
-          queue.push([newMove, distance++]);
-          visited.add(JSON.stringify(newMove));
+        if (!visited.has(newKey)) {
+          queue.push([newMove, distance + 1]);
         }
       }
     }
   }
 
-  console.log(graph);
+  // console.log('the result is: ', result);
 };
 
-knightMoves([0, 0], [3, 3]);
+knightMoves([0, 0], [1, 2]);

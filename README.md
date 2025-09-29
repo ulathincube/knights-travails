@@ -8,3 +8,5 @@ ChessBoard
 
 linkedlist
 {data: [1, 2], next: }
+
+'[[1,2], [3,3]] [[1,2]]'
